@@ -18,14 +18,10 @@ public class SecurityConfig {
     public SecurityConfig(UserService userService) {
         this.userService = userService;
     }
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(authorizeRequests -> authorizeRequests.requestMatchers("/api/users/register", "/login").permitAll().anyRequest().authenticated()).formLogin(formLogin -> formLogin.loginPage("/login").permitAll()).logout(LogoutConfigurer::permitAll);
+        http.authorizeHttpRequests(authorizeRequests -> authorizeRequests.requestMatchers("/api/user/register", "/login").permitAll().anyRequest().authenticated()).formLogin(formLogin -> formLogin.loginPage("/login").permitAll()).logout(LogoutConfigurer::permitAll);
         return http.build();
     }
 
