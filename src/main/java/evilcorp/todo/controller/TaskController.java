@@ -35,7 +35,7 @@ public class TaskController {
     }
 
     @PostMapping
-    public Task createTask(Task task) {
+    public Task createTask(@RequestBody Task task) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Optional<User> user = userService.findUserByUsername(username);
         task.setUser(user.orElse(null));
