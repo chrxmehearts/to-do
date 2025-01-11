@@ -19,7 +19,6 @@ public class User {
     @Column(nullable = false, unique = true)
     private String username;
     @Column(nullable = false)
-    @JsonIgnore
     private String password;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id", nullable = false)
