@@ -44,13 +44,13 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/register", "/login").permitAll()
+                                .requestMatchers("/register", "/login", "/error").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .formLogin(formLogin ->
                         formLogin
                                 .permitAll()
-                                .failureUrl("/login?error=true")
+                                .failureUrl("/login?error")
                                 .defaultSuccessUrl("/tasks", true)
                 )
                 .httpBasic(Customizer.withDefaults())
