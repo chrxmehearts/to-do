@@ -9,7 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -32,15 +34,19 @@ public class TaskController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Task> getTaskById(@PathVariable int id) {
+    public ResponseEntity<Map<String, Object>> getTaskById(@PathVariable int id) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Optional<User> userOptional = userService.findUserByUsername(username);
         User user = userOptional.get();
         Task task = taskService.getTaskById(id);
         if (user.getId().equals(task.getUser().getId())) {
-            return ResponseEntity.ok(task);
+            Map<String, Object> response = new HashMap<>();
+            response.put("Your task", task);
+            return ResponseEntity.ok(response);
         } else {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Task not found");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
         }
     }
 
