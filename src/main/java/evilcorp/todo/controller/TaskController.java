@@ -44,7 +44,7 @@ public class TaskController {
         } else {
             Map<String, Object> response = new HashMap<>();
             response.put("Error", "Task not found");
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
     }
 
@@ -57,7 +57,7 @@ public class TaskController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Task> updateTask(@PathVariable long id, @RequestBody Task updatedTask) {
+    public ResponseEntity<Map<String, Object>> updateTask(@PathVariable long id, @RequestBody Task updatedTask) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Optional<User> userOptional = userService.findUserByUsername(username);
         User user = userOptional.get();
@@ -70,9 +70,13 @@ public class TaskController {
             task.setDescription(updatedTask.getDescription());
             task.setCompleted(updatedTask.isCompleted());
             Task updated = taskService.updateTask(id, task);
-            return ResponseEntity.ok(updated);
+            Map<String, Object> response = new HashMap<>();
+            response.put("Updated task", task);
+            return ResponseEntity.ok(response);
         } else {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            Map<String, Object> response = new HashMap<>();
+            response.put("Error", "Task not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
     }
 
