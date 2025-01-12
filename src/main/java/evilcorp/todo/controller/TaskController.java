@@ -34,18 +34,16 @@ public class TaskController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> getTaskById(@PathVariable int id) {
+    public ResponseEntity<Object> getTaskById(@PathVariable int id) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Optional<User> userOptional = userService.findUserByUsername(username);
         User user = userOptional.get();
         Task task = taskService.getTaskById(id);
         if (user.getId().equals(task.getUser().getId())) {
-            Map<String, Object> response = new HashMap<>();
-            response.put("Your task", task);
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok(task);
         } else {
             Map<String, Object> response = new HashMap<>();
-            response.put("message", "Task not found");
+            response.put("Error", "Task not found");
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
         }
     }
