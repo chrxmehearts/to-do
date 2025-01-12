@@ -62,10 +62,12 @@ public class TaskController {
         Optional<User> userOptional = userService.findUserByUsername(username);
         User user = userOptional.get();
         Task task = taskService.getTaskById(id);
-        if (task == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-        if (user.getId().equals(task.getUser().getId())) {
+
+        if (task == null || (!user.getId().equals(task.getUser().getId()))) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("Error", "Task not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        } else {
             task.setTitle(updatedTask.getTitle());
             task.setDescription(updatedTask.getDescription());
             task.setCompleted(updatedTask.isCompleted());
@@ -73,17 +75,25 @@ public class TaskController {
             Map<String, Object> response = new HashMap<>();
             response.put("Updated task", task);
             return ResponseEntity.ok(response);
-        } else {
-            Map<String, Object> response = new HashMap<>();
-            response.put("Error", "Task not found");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
     }
 
     @DeleteMapping("/{id}")
-    public String deleteTask(@PathVariable long id) {
-        taskService.deleteTask(id);
-        return "Task deleted";
+    public ResponseEntity<Map<String, Object>> deleteTask(@PathVariable long id) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<User> userOptional = userService.findUserByUsername(username);
+        User user = userOptional.get();
+        Task task = taskService.getTaskById(id);
+        if (task == null || (!user.getId().equals(task.getUser().getId()))) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("Error", "Task not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        } else {
+            taskService.deleteTask(id);
+            Map<String, Object> response = new HashMap<>();
+            response.put("Deleted task", task);
+            return ResponseEntity.ok(response);
+        }
     }
 
 }
