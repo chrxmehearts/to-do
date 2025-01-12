@@ -4,6 +4,8 @@ import evilcorp.todo.entity.Task;
 import evilcorp.todo.entity.User;
 import evilcorp.todo.service.TaskService;
 import evilcorp.todo.service.UserService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,8 +32,16 @@ public class TaskController {
     }
 
     @GetMapping("/{id}")
-    public Task getTaskById(@PathVariable int id) {
-        return taskService.getTaskById(id);
+    public ResponseEntity<Task> getTaskById(@PathVariable int id) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<User> userOptional = userService.findUserByUsername(username);
+        User user = userOptional.get();
+        Task task = taskService.getTaskById(id);
+        if(user.getId().equals(task.getUser().getId())) {
+            return ResponseEntity.ok(task);
+        }else{
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
     }
 
     @PostMapping
