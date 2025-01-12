@@ -37,9 +37,9 @@ public class TaskController {
         Optional<User> userOptional = userService.findUserByUsername(username);
         User user = userOptional.get();
         Task task = taskService.getTaskById(id);
-        if(user.getId().equals(task.getUser().getId())) {
+        if (user.getId().equals(task.getUser().getId())) {
             return ResponseEntity.ok(task);
-        }else{
+        } else {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
     }
@@ -53,8 +53,23 @@ public class TaskController {
     }
 
     @PutMapping("/{id}")
-    public Task updateTask(@PathVariable long id, @RequestBody Task updatedTask) {
-        return taskService.updateTask(id, updatedTask);
+    public ResponseEntity<Task> updateTask(@PathVariable long id, @RequestBody Task updatedTask) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<User> userOptional = userService.findUserByUsername(username);
+        User user = userOptional.get();
+        Task task = taskService.getTaskById(id);
+        if (task == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        if (user.getId().equals(task.getUser().getId())) {
+            task.setTitle(updatedTask.getTitle());
+            task.setDescription(updatedTask.getDescription());
+            task.setCompleted(updatedTask.isCompleted());
+            Task updated = taskService.updateTask(id, task);
+            return ResponseEntity.ok(updated);
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
     }
 
     @DeleteMapping("/{id}")

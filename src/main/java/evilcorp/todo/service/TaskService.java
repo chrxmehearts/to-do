@@ -21,7 +21,7 @@ public class TaskService {
 
     public Task updateTask(Long id, Task updatedTask) {
         Task existingTask = taskRepository.getTaskById(id);
-        if (existingTask != null) {
+        if (existingTask == null) {
             throw new RuntimeException("Task with id " + id + " not found");
         }
         existingTask.setTitle(updatedTask.getTitle());
