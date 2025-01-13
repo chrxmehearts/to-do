@@ -44,7 +44,7 @@ public class AdminController {
             response.put("message", "User with id " + userid + " does not exist");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
-        if ("admin".equals(user.getRole().getName())) {
+        if ("ROLE_ADMIN".equals(user.getRole().getName())) {
             Map<String, Object> response = new HashMap<>();
             response.put("message", "Cannot watch tasks of user with role 'admin'");
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
@@ -66,7 +66,7 @@ public class AdminController {
             response.put("message", "Incorrect task id " + taskId + " for user with id " + userid);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
-        if ("admin".equals(user.getRole().getName())) {
+        if ("ROLE_ADMIN".equals(user.getRole().getName())) {
             Map<String, Object> response = new HashMap<>();
             response.put("message", "Cannot watch task of user with role 'admin'");
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
@@ -89,7 +89,7 @@ public class AdminController {
             response.put("message", "Incorrect task id " + taskId + " for user with id " + userid);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
-        if ("admin".equals(user.getRole().getName())) {
+        if ("ROLE_ADMIN".equals(user.getRole().getName())) {
             Map<String, Object> response = new HashMap<>();
             response.put("message", "Cannot delete task of user with role 'admin'");
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
@@ -111,7 +111,7 @@ public class AdminController {
             response.put("message", "User with ID " + userid + " does not exist");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
-        if ("admin".equals(user.getRole().getName())) {
+        if ("ROLE_ADMIN".equals(user.getRole().getName())) {
             Map<String, Object> response = new HashMap<>();
             response.put("message", "Cannot ban user with role 'admin'");
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
