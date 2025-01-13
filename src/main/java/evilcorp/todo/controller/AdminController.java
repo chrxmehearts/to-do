@@ -1,6 +1,7 @@
 package evilcorp.todo.controller;
 
 import evilcorp.todo.DTO.UserAdminDto;
+import evilcorp.todo.DTO.UserTaskAdminDto;
 import evilcorp.todo.DTO.UserTasksAdminDto;
 import evilcorp.todo.entity.Task;
 import evilcorp.todo.entity.User;
@@ -36,6 +37,13 @@ public class AdminController {
         User user = userService.findUserById(userid);
         List<Task> tasks = taskService.findByUser(user);
         return new UserTasksAdminDto(user.getUsername(), tasks);
+    }
+
+    @GetMapping("/users/{userid}/tasks/{taskId}")
+    public UserTaskAdminDto showUserTask(@PathVariable Long userid, @PathVariable Long taskId) {
+        User user = userService.findUserById(userid);
+        Task task = taskService.getTaskById(taskId);
+        return new UserTaskAdminDto(user.getUsername(), task);
     }
 
 }
