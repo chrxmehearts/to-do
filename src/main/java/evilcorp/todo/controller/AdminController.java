@@ -34,26 +34,47 @@ public class AdminController {
     }
 
     @GetMapping("/users/{userid}/tasks")
-    public UserTasksAdminDto showAllUserTasks(@PathVariable Long userid) {
+    public ResponseEntity<Object> showAllUserTasks(@PathVariable Long userid) {
         User user = userService.findUserById(userid);
         List<Task> tasks = taskService.findByUser(user);
-        return new UserTasksAdminDto(user.getUsername(), tasks);
+        if (user == null) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "User with id " + userid + " does not exist");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+        return ResponseEntity.ok(new UserTasksAdminDto(user.getUsername(), tasks));
     }
 
     @GetMapping("/users/{userid}/tasks/{taskId}")
-    public UserTaskAdminDto showUserTask(@PathVariable Long userid, @PathVariable Long taskId) {
+    public ResponseEntity<Object> showUserTask(@PathVariable Long userid, @PathVariable Long taskId) {
         User user = userService.findUserById(userid);
         Task task = taskService.getTaskById(taskId);
-        return new UserTaskAdminDto(user.getUsername(), task);
+        if (user == null) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "User with id " + userid + " does not exist");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+        if (task == null || !userid.equals(task.getUser().getId())) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Incorrect task id " +taskId + " for user with id " + userid);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+        return ResponseEntity.ok(new UserTaskAdminDto(user.getUsername(), task));
+
     }
 
     @DeleteMapping("/users/{userid}/tasks/{taskId}")
     public ResponseEntity<Map<String, Object>> deleteUserTask(@PathVariable Long userid, @PathVariable Long taskId) {
         User user = userService.findUserById(userid);
         Task task = taskService.getTaskById(taskId);
+        if (user == null) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "User with id " + userid + " does not exist");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
         if(task == null  || !userid.equals(task.getUser().getId())) {
             Map<String, Object> response = new HashMap<>();
-            response.put("message", "Incorrect task id for this user");
+            response.put("message", "Incorrect task id " +taskId + " for user with id " + userid);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
         taskService.deleteTask(taskId);
