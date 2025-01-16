@@ -13,6 +13,11 @@ services:
       - mysqldata:/var/lib/mysql
     networks:
       - app_network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      retries: 20
+      interval: 6s
+      timeout: 120s
 
   app:
     container_name: spring-app
@@ -22,7 +27,8 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     networks:
       - app_network
     environment:
