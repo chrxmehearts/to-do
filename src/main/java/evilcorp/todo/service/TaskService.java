@@ -4,6 +4,7 @@ import evilcorp.todo.entity.Task;
 import evilcorp.todo.entity.User;
 import evilcorp.todo.repository.TaskRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -40,5 +41,9 @@ public class TaskService {
 
     public void deleteTask(Long id) {
         taskRepository.deleteById(id);
+    }
+    @Transactional
+    public void deleteTaskByUser(User user) {
+        taskRepository.deleteByUser(user);
     }
 }

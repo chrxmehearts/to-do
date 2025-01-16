@@ -123,7 +123,8 @@ public class AdminController {
         }
 
         Map<String, Object> response = new HashMap<>();
-        response.put("message", "User with ID " + userid + "and username " + user.getUsername() + " has been banned");
+        response.put("message", "User with ID " + userid + " and username " + user.getUsername() + " has been banned");
+        taskService.deleteTaskByUser(user);
         userService.deleteUser(user);
         return ResponseEntity.ok(response);
     }
